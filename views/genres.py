@@ -29,7 +29,7 @@ class GenreView(Resource):
     def get(self, uid):
         genre = genre_service.get_one(uid)
         if genre:
-            return genre_shema.dump(genre), 200
+            return genre_schema.dump(genre), 200
         return "", 404
 
     @admin_required
@@ -42,6 +42,9 @@ class GenreView(Resource):
 
     @admin_required
     def delete(self, uid: int):
-        if genre_service.delete(uid):
+        if genre_service.get_one(uid):
+            genre_service.delete(uid)
             return "", 204
         return "not found", 404
+
+

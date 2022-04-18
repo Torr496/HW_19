@@ -23,9 +23,6 @@ class UserService:
         return self.dao.get_filter(filter_dict_clear)
 
     def create(self, data_in):
-        user_pass = data_in.get("password")
-        if user_pass:
-            data_in["password"] = get_hash(user_pass)
         return self.dao.create(data_in)
 
     def update(self, data_in):

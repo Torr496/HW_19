@@ -4,7 +4,7 @@ from flask_restx import Resource, Namespace, reqparse
 
 from dao.model.user import UserSchema
 from implemented import user_service
-
+from service.user import get_hash
 
 user_ns = Namespace('users')
 user_schema = UserSchema()
@@ -30,6 +30,9 @@ class UsersView(Resource):
 
     def post(self):
         req_json = request.json
+        password = req_json.get("password")
+        password = get_hash(password)
+        req_json["password"] = password
         new_user = user_service.create(req_json)
         return f"Created id: {new_user.id} Это новый пользователь", 201
 
@@ -51,8 +54,8 @@ class UserView(Resource):
         return "not found", 404
 
     def delete(self, uid: int):
-        if user_service.delete(uid):
+        if user_service.get_one(uid):
+            user_service.delete(uid)
             return "", 204
         return "not found", 404
-
 

@@ -5,10 +5,10 @@ from dao.model.director import DirectorSchema
 from implemented import director_service
 from service.auth import auth_required, admin_required
 
-
 director_ns = Namespace('directors')
-director_schema = DirectorSchema
+director_schema = DirectorSchema()
 directors_schema = DirectorSchema(many=True)
+
 
 @director_ns.route('/')
 class DirectorsView(Resource):
@@ -37,12 +37,13 @@ class DirectorView(Resource):
     def put(self, did: int):
         req_json = request.json
         if not req_json.get('id'):
-            req_json['id'] =did
+            req_json['id'] = did
         if director_service.update(req_json):
             return f"Updated id^ {did}", 201
 
     @admin_required
     def delete(self, did: int):
-        if director_service.delete(did):
+        if director_service.get_one(did):
+            director_service.delete(did)
             return "", 204
         return "not found", 404
